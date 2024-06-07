@@ -1,0 +1,48 @@
+﻿@page "/"
+@inject IBookRepository Repo
+@* @attribute [StreamRendering] *@
+@* @rendermode InteractiveServer *@
+
+<PageTitle>
+    Tüm Kitaplar
+</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-6">
+        <a href="add-new" class="btn btn-primary shadow-none mb-3"> 
+            Yeni Kitap
+        </a>
+        @if (Books is null)
+        {
+            <div class="book-item">
+                Lütfen Bekleyiniz...
+            </div>
+        }
+        else if (Books.Any())
+        {
+            @foreach (var book in Books)
+            {
+                <div class="book-item">
+                   <BookCard @rendermode="InteractiveServer" book="book"/>
+                </div>
+            }
+
+        }
+        else
+        {
+            <div class="book-item">
+                Kitap Mevcut Değil
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    public IEnumerable<Book>? Books;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // await Task.Delay(3000); //ekranda bekleme süresini ayarlar üst tarafta improt ile kullanlır
+        Books = await Repo.GetAllAsync();
+    }
+}
